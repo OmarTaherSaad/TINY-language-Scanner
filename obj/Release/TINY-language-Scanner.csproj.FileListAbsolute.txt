@@ -1,0 +1,18 @@
+C:\Users\Omar\Source\Repos\TINY-language-Scanner\bin\Release\TINY language Scanner.exe.config
+C:\Users\Omar\Source\Repos\TINY-language-Scanner\bin\Release\TINY language Scanner.exe
+C:\Users\Omar\Source\Repos\TINY-language-Scanner\bin\Release\TINY language Scanner.pdb
+C:\Users\Omar\Source\Repos\TINY-language-Scanner\obj\Release\TINY_language_Scanner.ScannerForm.resources
+C:\Users\Omar\Source\Repos\TINY-language-Scanner\obj\Release\TINY_language_Scanner.Properties.Resources.resources
+C:\Users\Omar\Source\Repos\TINY-language-Scanner\obj\Release\TINY-language-Scanner.csproj.GenerateResource.cache
+C:\Users\Omar\Source\Repos\TINY-language-Scanner\obj\Release\TINY-language-Scanner.csproj.Fody.CopyLocal.cache
+C:\Users\Omar\Source\Repos\TINY-language-Scanner\obj\Release\TINY language Scanner.exe
+C:\Users\Omar\Source\Repos\TINY-language-Scanner\obj\Release\TINY language Scanner.pdb
+E:\STUDY\4th CSE\Compilers\TINY-language-Scanner\bin\Release\TINY language Scanner.exe.config
+E:\STUDY\4th CSE\Compilers\TINY-language-Scanner\bin\Release\TINY language Scanner.exe
+E:\STUDY\4th CSE\Compilers\TINY-language-Scanner\bin\Release\TINY language Scanner.pdb
+E:\STUDY\4th CSE\Compilers\TINY-language-Scanner\obj\Release\TINY_language_Scanner.ScannerForm.resources
+E:\STUDY\4th CSE\Compilers\TINY-language-Scanner\obj\Release\TINY_language_Scanner.Properties.Resources.resources
+E:\STUDY\4th CSE\Compilers\TINY-language-Scanner\obj\Release\TINY-language-Scanner.csproj.GenerateResource.cache
+E:\STUDY\4th CSE\Compilers\TINY-language-Scanner\obj\Release\TINY-language-Scanner.csproj.Fody.CopyLocal.cache
+E:\STUDY\4th CSE\Compilers\TINY-language-Scanner\obj\Release\TINY language Scanner.exe
+E:\STUDY\4th CSE\Compilers\TINY-language-Scanner\obj\Release\TINY language Scanner.pdb
