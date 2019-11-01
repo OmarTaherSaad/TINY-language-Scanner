@@ -7,7 +7,7 @@ using MetroFramework.Forms;
 
 namespace TINY_language_Scanner
 {
-    internal enum DFA_State
+    internal enum DfaState
     {
         START,
         INCOMMENT,
@@ -21,15 +21,15 @@ namespace TINY_language_Scanner
 
     public partial class ScannerForm : MetroForm
     {
-        private readonly List<KeyValuePair<string, string>> Keywords;
-        private readonly List<KeyValuePair<string,string>> Symbols;
-        private DFA_State currentState, nextState;
+        readonly List<KeyValuePair<string, string>> Keywords;
+        readonly List<KeyValuePair<string, string>> Symbols;
+        DfaState currentState, nextState;
 
         public ScannerForm()
         {
-            currentState = DFA_State.START;
-            nextState = DFA_State.START;
-            KeyValuePair<string, string>[] _symbols=
+            currentState = DfaState.START;
+            nextState = DfaState.START;
+            KeyValuePair<string, string>[] symbols =
             {
                 new KeyValuePair<string, string>("+", "PLUS_TK"),
                 new KeyValuePair<string, string>("-", "MINUS_TK"),
@@ -46,7 +46,7 @@ namespace TINY_language_Scanner
                 new KeyValuePair<string, string>(">=", "GTE_TK"),
                 new KeyValuePair<string, string>("<>", "NOT_EQUAL_TK")
             };
-            KeyValuePair<string, string>[] _keywords =
+            KeyValuePair<string, string>[] keywords =
             {
                 new KeyValuePair<string, string>("if", "IF_TK"),
                 new KeyValuePair<string, string>("then", "THEN_TK"),
@@ -58,14 +58,17 @@ namespace TINY_language_Scanner
                 new KeyValuePair<string, string>("write", "WRITE_TK"),
                 new KeyValuePair<string, string>("while", "WHILE_TK")
             };
-            Keywords = new List<KeyValuePair<string, string>>(_keywords);
-            Symbols = new List<KeyValuePair<string,string>>(_symbols);
+            Keywords = new List<KeyValuePair<string, string>>(keywords);
+            Symbols = new List<KeyValuePair<string, string>>(symbols);
 
             InitializeComponent();
         }
 
         private void scanBtn_Click(object sender, EventArgs e)
         {
+            //Initialize everything
+            currentState = DfaState.START;
+            nextState = DfaState.START;
             scanBtn.Enabled = false;
             var code = codeTextBox.Text;
             var currentToken = "";
@@ -75,86 +78,86 @@ namespace TINY_language_Scanner
                 var c = code[i];
                 switch (currentState)
                 {
-                    case DFA_State.START:
-                    {
-                        currentToken = "";
-                        if (c == 32 || c == 9 || c == 10) //Whitespace, Tab or new line
-                            //White space
-                            nextState = DFA_State.START;
-                        else if (c == '{')
-                            nextState = DFA_State.INCOMMENT;
-                        else if (char.IsDigit(c))
-                            nextState = DFA_State.INNUM;
-                        else if (char.IsLetter(c))
-                            nextState = DFA_State.INID;
-                        else if (c == ':')
-                            nextState = DFA_State.INASSIGN;
-                        else if (Symbols.Any(s => s.Key == c.ToString()))
-                            nextState = DFA_State.DONE;
-                        else if (c == '"')
-                            nextState = DFA_State.STRLTR;
-                        else
-                            //Other
-                            nextState = DFA_State.DONE;
-                        break;
-                    }
-                    case DFA_State.INCOMMENT:
-                        nextState = c == '}' ? DFA_State.START : c == '{' ? DFA_State.ERROR : DFA_State.INCOMMENT;
-                        break;
-                    case DFA_State.STRLTR:
-                    {
-                        if (c == '"' && currentToken[currentToken.Length - 1] != '\\')
+                    case DfaState.START:
                         {
-                            nextState = DFA_State.DONE;
-                            currentToken += c;
-                            if (i + 1 < code.Length)
-                                c = code[++i];
+                            currentToken = "";
+                            if (c == 32 || c == 9 || c == 10) //Whitespace, Tab or new line
+                                                              //White space
+                                nextState = DfaState.START;
+                            else if (c == '{')
+                                nextState = DfaState.INCOMMENT;
+                            else if (char.IsDigit(c))
+                                nextState = DfaState.INNUM;
+                            else if (char.IsLetter(c))
+                                nextState = DfaState.INID;
+                            else if (c == ':')
+                                nextState = DfaState.INASSIGN;
+                            else if (Symbols.Any(s => s.Key == c.ToString()))
+                                nextState = DfaState.DONE;
+                            else if (c == '"')
+                                nextState = DfaState.STRLTR;
+                            else
+                                //Other
+                                nextState = DfaState.DONE;
+                            break;
                         }
-                        else
+                    case DfaState.INCOMMENT:
+                        nextState = c == '}' ? DfaState.START : c == '{' ? DfaState.ERROR : DfaState.INCOMMENT;
+                        break;
+                    case DfaState.STRLTR:
                         {
-                            nextState = DFA_State.STRLTR;
+                            if (c == '"' && currentToken[currentToken.Length - 1] != '\\')
+                            {
+                                nextState = DfaState.DONE;
+                                currentToken += c;
+                                if (i + 1 < code.Length)
+                                    c = code[++i];
+                            }
+                            else
+                            {
+                                nextState = DfaState.STRLTR;
+                            }
+
+                            break;
                         }
+                    case DfaState.INNUM:
+                        {
+                            if (char.IsDigit(c))
+                                nextState = DfaState.INNUM;
+                            else if (char.IsLetter(c))
+                                nextState = DfaState.ERROR;
+                            else
+                                //Other
+                                nextState = DfaState.DONE;
 
-                        break;
-                    }
-                    case DFA_State.INNUM:
-                    {
-                        if (char.IsDigit(c))
-                            nextState = DFA_State.INNUM;
-                        else if (char.IsLetter(c))
-                            nextState = DFA_State.ERROR;
-                        else
-                            //Other
-                            nextState = DFA_State.DONE;
-
-                        break;
-                    }
-                    case DFA_State.INID:
-                    {
-                        if (char.IsLetter(c) || char.IsDigit(c))
-                            nextState = DFA_State.INID;
-                        else
-                            nextState = DFA_State.DONE;
-                        break;
-                    }
-                    case DFA_State.INASSIGN:
+                            break;
+                        }
+                    case DfaState.INID:
+                        {
+                            if (char.IsLetter(c) || char.IsDigit(c))
+                                nextState = DfaState.INID;
+                            else
+                                nextState = DfaState.DONE;
+                            break;
+                        }
+                    case DfaState.INASSIGN:
                         if (c == '=')
-                            nextState = DFA_State.DONE;
+                            nextState = DfaState.DONE;
                         else
-                            nextState = DFA_State.ERROR;
+                            nextState = DfaState.ERROR;
                         break;
-                    case DFA_State.DONE:
+                    case DfaState.DONE:
                         currentToken = "";
                         break;
-                    case DFA_State.ERROR:
-                        nextState = DFA_State.DONE;
+                    case DfaState.ERROR:
+                        nextState = DfaState.DONE;
                         i = code.Length;
                         break;
                 }
 
-                if (nextState == DFA_State.DONE)
+                if (nextState == DfaState.DONE)
                 {
-                    if (currentState == DFA_State.START || currentState == DFA_State.INASSIGN)
+                    if (currentState == DfaState.START || currentState == DfaState.INASSIGN)
                     {
                         //It's a one character token
                         currentToken += c;
@@ -163,7 +166,7 @@ namespace TINY_language_Scanner
 
                     IdentifyTokenType(currentToken);
                     currentToken = "";
-                    nextState = DFA_State.START;
+                    nextState = DfaState.START;
                     i--;
                 }
                 else
@@ -182,6 +185,15 @@ namespace TINY_language_Scanner
                 //    //Changed the state -> token ended
 
                 //}
+            }
+
+            if (nextState == DfaState.INCOMMENT)
+            {
+                outputTextBox.Text += " UNCLOSED COMMENT \t--> ALL CODE AFTER IT IS IGNORED";
+            }
+            else
+            {
+                IdentifyTokenType(currentToken); //for last token
             }
         }
 
@@ -204,23 +216,23 @@ namespace TINY_language_Scanner
         {
             if (token.Length == 0 || token.Trim().Length == 0) return "";
             var type = "";
-            if (currentState == DFA_State.ERROR)
+            if (currentState == DfaState.ERROR)
             {
                 type = "EXCEPTION! Does not belong to TINY language";
             }
-            else if (currentState == DFA_State.INNUM)
+            else if (currentState == DfaState.INNUM)
             {
                 type = "Integer Literal";
             }
-            else if (currentState == DFA_State.INID)
+            else if (currentState == DfaState.INID)
             {
                 type = Keywords.Any(k => k.Key == token) ? Keywords.First(k => k.Key == token).Value : "identifier";
             }
-            else if (currentState == DFA_State.INASSIGN)
+            else if (currentState == DfaState.INASSIGN)
             {
                 type = "assign";
             }
-            else if (currentState == DFA_State.STRLTR)
+            else if (currentState == DfaState.STRLTR)
             {
                 type = "String Literal";
             }
